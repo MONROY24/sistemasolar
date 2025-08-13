@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Solar 3D Interactivo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #000;
+            color: white;
+            overflow: hidden;
+        }
+
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #info-panel {
+            position: absolute;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: linear-gradient(135deg, rgba(15, 15, 35, 0.95), rgba(25, 25, 55, 0.95));
+            backdrop-filter: blur(10px);
+            border-left: 2px solid rgba(100, 150, 255, 0.3);
+            padding: 30px;
+            transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow-y: auto;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #info-panel.active {
+            right: 0;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 100, 100, 0.8);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 100, 100, 1);
+            transform: scale(1.1);
+        }
+
+        .planet-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #64b5f6, #81c784);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .planet-info h3 {
+            color: #64b5f6;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            border-bottom: 2px solid rgba(100, 181, 246, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .planet-info p {
+            line-height: 1.6;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .data-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .data-label {
+            font-weight: bold;
+            color: #81c784;
+            font-size: 0.9em;
+        }
+
+        .data-value {
+            margin-top: 5px;
+            font-size: 1.1em;
+        }
+
+        #title {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            z-index: 100;
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #instructions p {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            color: #64b5f6;
+        }
+
+        .orbit {
+            position: absolute;
+            border: 1px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+        }
+
+        .nav-buttons {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-button {
+            background: rgba(100, 150, 255, 0.8);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav-button:hover {
+            background: rgba(100, 150, 255, 1);
+        }
+
+        #presentation-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0a23 90%, #1a1a3b 100%);
+            color: white;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            z-index: 9999;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #presentation-panel.active {
+            display: flex;
+        }
+
+        #presentation-content {
+            max-width: 1100px;
+            width: 98vw;
+            margin: 80px auto 20px auto;
+            background: rgba(30,40,70,0.95);
+            border-radius: 20px;
+            padding: 40px 40px 40px 40px;
+            box-shadow: 0 0 40px #000a;
+            text-align: center;
+            overflow-y: auto;
+            max-height: 82vh;
+        }
+
+        #presentation-nav {
+            margin-top: 20px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            position: fixed;
+            bottom: 40px;
+            left: 0;
+            width: 100vw;
+            z-index: 10001;
+        }
+
+        #exit-presentation {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1.2em;
+            cursor: pointer;
+            z-index: 10001;
+            transition: background 0.3s;
+        }
+        #exit-presentation:hover {
+            background: #ff2222;
+        }
+    </style>
+</head>
+<body>
+    <div id="title">Sistema Solar 3D</div>
+    
+    <div id="canvas-container">
+        <div class="loading" id="loading">Cargando el sistema solar...</div>
+    </div>
+
+    <div id="info-panel">
+        <button class="close-btn" onclick="closePanel()">×</button>
+        <div id="planet-content"></div>
+        <div class="nav-buttons" id="nav-buttons" style="position:static; justify-content:center; margin-top:20px;">
+            <button class="nav-button" id="prev-btn" onclick="prevPlanet()">Anterior</button>
+            <button class="nav-button" id="next-btn" onclick="nextPlanet()">Siguiente</button>
+        </div>
+    </div>
+
+    <div id="instructions">
+        <p><strong>🖱️ Click:</strong> Seleccionar planeta</p>
+        <p><strong>🖱️ Arrastrar:</strong> Rotar cámara</p>
+        <p><strong>🖱️ Desplazamiento:</strong> Zoom</p>
+        <button class="nav-button" id="presentation-btn" onclick="startPresentation()" style="margin-top:10px; width:100%;">Iniciar Presentación</button>
+    </div>
+
+    <div id="presentation-panel">
+        <button id="exit-presentation" onclick="stopPresentation()">Salir</button>
+        <div id="presentation-content"></div>
+        <div id="presentation-nav">
+            <button class="nav-button" onclick="prevPresentationSlide()">Anterior</button>
+            <button class="nav-button" onclick="nextPresentationSlide()">Siguiente</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, raycaster, mouse;
+        let planets = [];
+        let planetMeshes = [];
+        let isMouseDown = false;
+        let mouseX = 0, mouseY = 0;
+        let currentPlanetIndex = 0;
+        let presentationInterval = null;
+        let isPresenting = false;
+        let presentationIndex = 0;
+        let presentationKeys = [];
+
+        const planetData = {
+            sol: {
+                name: "Sol",
+                radius: 2,
+                distance: 0,
+                speed: 0,
+                color: 0xFFD700,
+                emissive: 0xFFD700,
+                image: "./img/sol.png",
+                data: {
+                    "Tipo de estrella": "Enana amarilla (G2V)",
+                    "Diámetro": "1,391,016 km",
+                    "Temperatura superficial": "5,500°C",
+                    "Edad": "4.6 mil millones de años",
+                    "Composición": "Hidrógeno y helio",
+                    "Distancia a la Tierra": "149.6 millones km"
+                },
+                description: "El Sol es la estrella central del sistema solar y la fuente principal de energía para la vida en la Tierra.",
+                curiosities: "Contiene el 99.86% de la masa del sistema solar. Su luz tarda 8 minutos en llegar a la Tierra."
+            },
+            mercurio: {
+                name: "Mercurio",
+                radius: 0.38,
+                distance: 4,
+                speed: 0.02,
+                color: 0xFF6B35,
+                emissive: 0x4A1A00,
+                image: "url_to_mercury_image.jpg",
+                data: {
+                    "Distancia del Sol": "57.9 millones km",
+                    "Diámetro": "4,879 km",
+                    "Temperatura": "-173° a 427°",
+                    "Día": "59 días terrestres",
+                    "Año": "88 días terrestres",
+                    "Lunas": "0"
+                },
+                description: "El planeta más cercano al Sol y el más pequeño del sistema solar.",
+                curiosities: "Un día en Mercurio dura más que su año. Su superficie está llena de cráteres similares a la Luna."
+            },
+            venus: {
+                name: "Venus",
+                radius: 0.95,
+                distance: 6,
+                speed: 0.015,
+                color: 0xFFD700,
+                emissive: 0x8B6914,
+                image: "url_to_venus_image.jpg",
+                data: {
+                    "Distancia del Sol": "108.2 millones km",
+                    "Diámetro": "12,104 km",
+                    "Temperatura": "462° (constante)",
+                    "Día": "243 días terrestres",
+                    "Año": "225 días terrestres",
+                    "Lunas": "0"
+                },
+                description: "El planeta más caliente del sistema solar debido a su atmósfera densa de CO₂.",
+                curiosities: "Rota en dirección opuesta a la mayoría de planetas. Es el planeta más brillante en el cielo nocturno."
+            },
+            tierra: {
+                name: "Tierra",
+                radius: 1,
+                distance: 8,
+                speed: 0.01,
+                color: 0x6B93D6,
+                image: "url_to_earth_image.jpg",
+                data: {
+                    "Distancia del Sol": "149.6 millones km",
+                    "Diámetro": "12,756 km",
+                    "Temperatura": "-89° a 58°C",
+                    "Día": "24 horas",
+                    "Año": "365.25 días",
+                    "Lunas": "1 (La Luna)"
+                },
+                description: "Nuestro hogar, el único planeta conocido con vida.",
+                curiosities: "71% de su superficie está cubierta de agua. Tiene un campo magnético que nos protege de la radiación solar."
+            },
+            marte: {
+                name: "Marte",
+                radius: 0.53,
+                distance: 10,
+                speed: 0.008,
+                color: 0xCD5C5C,
+                image: "url_to_mars_image.jpg",
+                data: {
+                    "Distancia del Sol": "227.9 millones km",
+                    "Diámetro": "6,792 km",
+                    "Temperatura": "-87° a -5°C",
+                    "Día": "24.6 horas",
+                    "Año": "687 días terrestres",
+                    "Lunas": "2 (Fobos y Deimos)"
+                },
+                description: "El 'planeta rojo' debido al óxido de hierro en su superficie.",
+                curiosities: "Tiene el volcán más grande del sistema solar: Monte Olimpo. Se cree que tuvo océanos en el pasado."
+            },
+            jupiter: {
+                name: "Júpiter",
+                radius: 2.5,
+                distance: 15,
+                speed: 0.005,
+                color: 0xD8CA9D,
+                image: "url_to_jupiter_image.jpg",
+                data: {
+                    "Distancia del Sol": "778.5 millones km",
+                    "Diámetro": "142,984 km",
+                    "Temperatura": "-108°",
+                    "Día": "9.9 horas",
+                    "Año": "12 años terrestres",
+                    "Lunas": "95+ conocidas"
+                },
+                description: "El gigante gaseoso más grande del sistema solar.",
+                curiosities: "Su Gran Mancha Roja es una tormenta que lleva siglos activa. Actúa como 'aspiradora cósmica' protegiendo planetas internos."
+            },
+            saturno: {
+                name: "Saturno",
+                radius: 2.1,
+                distance: 20,
+                speed: 0.003,
+                color: 0xFAD5A5,
+                image: "url_to_saturn_image.jpg",
+                data: {
+                    "Distancia del Sol": "1.43 mil millones km",
+                    "Diámetro": "120,536 km",
+                    "Temperatura": "-139°",
+                    "Día": "10.7 horas",
+                    "Año": "29 años terrestres",
+                    "Lunas": "146 conocidas"
+                },
+                description: "Famoso por sus espectaculares anillos de hielo y roca.",
+                curiosities: "Es menos denso que el agua, ¡flotaría en un océano gigante! Sus anillos tienen miles de divisiones."
+            },
+            urano: {
+                name: "Urano",
+                radius: 1.6,
+                distance: 25,
+                speed: 0.002,
+                color: 0x4FD0E7,
+                image: "url_to_uranus_image.jpg",
+                data: {
+                    "Distancia del Sol": "2.87 mil millones km",
+                    "Diámetro": "51,118 km",
+                    "Temperatura": "-197°",
+                    "Día": "17.2 horas",
+                    "Año": "84 años terrestres",
+                    "Lunas": "27 conocidas"
+                },
+                description: "El gigante de la rueda de invierno del lado.",
+                curiosities: "Rota 'acostado' con una inclinación de 98°. Tiene anillos verticales y llueve diamantes en su atmósfera."
+            },
+            neptuno: {
+                name: "Neptuno",
+                radius: 1.5,
+                distance: 30,
+                speed: 0.001,
+                color: 0x4B70DD,
+                image: "url_to_neptune_image.jpg",
+                data: {
+                    "Distancia del Sol": "4.5 mil millones km",
+                    "Diámetro": "49,528 km",
+                    "Temperatura": "-201°",
+                    "Día": "16.1 horas",
+                    "Año": "165 años terrestres",
+                    "Lunas": "16 conocidas"
+                },
+                description: "El planeta más ventoso del sistema solar.",
+                curiosities: "Vientos de hasta 2,100 km/h. Su luna Tritón orbita en dirección opuesta. Fue descubierto por cálculos matemáticos."
+            }
+        };
+
+        // Cambia la propiedad image para que sea el nombre del planeta y extensión png
+        Object.keys(planetData).forEach(key => {
+            planetData[key].image = `./img/${key}.png`;
+        });
+
+        function init() {
+            // Configuración básica
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: true,
+                powerPreference: "high-performance"
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Raycaster para detectar clics
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Crear fondo de estrellas
+            createStarField();
+
+            // Crea el sol
+            createSun();
+
+            // Crear planetas
+            createPlanets();
+
+            // Posicionar cámara
+            camera.position.set(0, 15, 35);
+            camera.lookAt(0, 0, 0);
+
+            // Escuchadores de eventos
+            window.addEventListener('resize', onWindowResize);
+            renderer.domElement.addEventListener('click', onMouseClick);
+            renderer.domElement.addEventListener('mousedown', onMouseDown);
+            renderer.domElement.addEventListener('mousemove', onMouseMove);
+            renderer.domElement.addEventListener('mouseup', onMouseUp);
+            renderer.domElement.addEventListener('wheel', onMouseWheel);
+
+            document.getElementById('loading').style.display = 'none';
+
+            // Iniciar animación
+            animate();
+        }
+
+        function createStarField() {
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsMaterial = new THREE.PointsMaterial({ color: 0xFFFFFF, size: 2 });
+
+            const starsVertices = [];
+            for (let i = 0; i < 10000; i++) {
+                const x = (Math.random() - 0.5) * 2000;
+                const y = (Math.random() - 0.5) * 2000;
+                const z = (Math.random() - 0.5) * 2000;
+                starsVertices.push(x, y, z);
+            }
+
+            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+            const stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+        }
+
+        function createSun() {
+            const sunGeometry = new THREE.SphereGeometry(2, 64, 64);
+            const sunMaterial = new THREE.MeshBasicMaterial({
+                color: 0xFFD700,
+                emissive: 0xFFD700,
+                emissiveIntensity: 0.3
+            });
+            const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+            sun.userData = { type: 'planet', key: 'sol' }; // Para que sea seleccionable
+            scene.add(sun);
+
+            // Luz del sol
+            const sunLight = new THREE.PointLight(0xFFFFFF, 2, 100);
+            sunLight.position.set(0, 0, 0);
+            scene.add(sunLight);
+
+            // Luz ambiental
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.1);
+            scene.add(ambientLight);
+        }
+
+        function createPlanets() {
+            Object.keys(planetData).forEach(key => {
+                if (key === "sol") return; // El sol ya fue creado
+                const planet = planetData[key];
+                const geometry = new THREE.SphereGeometry(planet.radius, 64, 64);
+                const material = new THREE.MeshLambertMaterial({ color: planet.color });
+                const mesh = new THREE.Mesh(geometry, material);
+
+                // Crear órbita circular (sin líneas rectas)
+                const curve = new THREE.EllipseCurve(
+                    0, 0, planet.distance, planet.distance, 0, 2 * Math.PI, false, 0
+                );
+                const points = curve.getPoints(100);
+                const orbitGeometry = new THREE.BufferGeometry().setFromPoints(points);
+                const orbitMaterial = new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.5, gapSize: 0.5, opacity: 0.5, transparent: true });
+                const orbit = new THREE.Line(orbitGeometry, orbitMaterial);
+                orbit.computeLineDistances();
+                orbit.rotation.x = Math.PI / 2;
+                scene.add(orbit);
+
+                // Posicionar el planeta
+                mesh.position.x = planet.distance;
+                mesh.userData = { type: 'planet', key: key };
+                scene.add(mesh);
+                planetMeshes.push({ mesh, ...planet });
+            });
+            // Agregar el Sol al inicio de la lista para la presentación
+            planetMeshes.unshift({ mesh: scene.children.find(obj => obj.userData && obj.userData.key === 'sol'), ...planetData['sol'] });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Girar el sol
+            if (scene.children[1]) {
+                scene.children[1].rotation.y += 0.005;
+            }
+
+            // Animar planetas
+            planetMeshes.forEach(planet => {
+                if (planet.name === "Sol") return;
+                const time = Date.now() * 0.001;
+                const angle = time * planet.speed;
+                planet.mesh.position.x = Math.cos(angle) * planet.distance;
+                planet.mesh.position.z = Math.sin(angle) * planet.distance;
+                planet.mesh.rotation.y += 0.01;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        function onMouseClick(event) {
+            if (isMouseDown) return;
+
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children);
+
+            for (let i = 0; i < intersects.length; i++) {
+                const object = intersects[i].object;
+                if (object.userData.type === 'planet') {
+                    showPlanetInfo(object.userData.key);
+                    break;
+                }
+            }
+        }
+
+        function onMouseDown(event) {
+            isMouseDown = true;
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        }
+
+        function onMouseMove(event) {
+            if (!isMouseDown) return;
+
+            const deltaX = event.clientX - mouseX;
+            const deltaY = event.clientY - mouseY;
+
+            const spherical = new THREE.Spherical();
+            spherical.setFromVector3(camera.position);
+
+            spherical.theta -= deltaX * 0.01;
+            spherical.phi += deltaY * 0.01;
+            spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+
+            camera.position.setFromSpherical(spherical);
+            camera.lookAt(0, 0, 0);
+
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        }
+
+        function onMouseUp() {
+            isMouseDown = false;
+        }
+
+        function onMouseWheel(event) {
+            const direction = event.deltaY > 0 ? 1 : -1;
+            camera.position.multiplyScalar(1 + direction * 0.1);
+
+            const distance = camera.position.length();
+            if (distance < 10) camera.position.setLength(10);
+            if (distance > 100) camera.position.setLength(100);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function showPlanetInfo(planetKey) {
+            const planet = planetData[planetKey];
+            currentPlanetIndex = Object.keys(planetData).indexOf(planetKey);
+
+            const content = `
+                <h1 class="planet-title">${planet.name}</h1>
+                <img src="${planet.image}" alt="${planet.name}" style="width: 100%; height: auto;">
+                <div class="planet-info">
+                    <h3>Descripción</h3>
+                    <p>${planet.description}</p>
+                </div>
+                <div class="planet-info">
+                    <h3>Datos Principales</h3>
+                    <div class="data-grid">
+                        ${Object.entries(planet.data).map(([key, value]) => `
+                            <div class="data-item">
+                                <div class="data-label">${key}</div>
+                                <div class="data-value">${value}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="planet-info">
+                    <h3>Curiosidades</h3>
+                    <p>${planet.curiosities}</p>
+                </div>
+            `;
+            document.getElementById('planet-content').innerHTML = content;
+            document.getElementById('info-panel').classList.add('active');
+            updateNavButtons(true);
+            document.getElementById('presentation-btn').style.display = 'inline-block';
+        }
+
+        function showGeneralInfo() {
+            const generalInfo = `
+                <h1 class="planet-title">Sistema Solar</h1>
+                <p>El sistema solar está compuesto por el Sol y todos los cuerpos celestes que orbitan a su alrededor, incluyendo planetas, lunas, asteroides, cometas y meteoroides. El Sol es una estrella que proporciona la luz y el calor necesarios para la vida en la Tierra.</p>
+                <p>Los planetas del sistema solar son: Mercurio, Venus, Tierra, Marte, Júpiter, Saturno, Urano y Neptuno. Cada uno tiene características únicas y fascinantes.</p>
+            `;
+            document.getElementById('planet-content').innerHTML = generalInfo;
+            document.getElementById('info-panel').classList.add('active');
+            updateNavButtons(false);
+            document.getElementById('presentation-btn').style.display = 'inline-block';
+        }
+
+        function updateNavButtons(isPlanet) {
+            document.getElementById('prev-btn').style.display = isPlanet ? 'inline-block' : 'none';
+            document.getElementById('next-btn').style.display = isPlanet ? 'inline-block' : 'none';
+            document.getElementById('info-btn').style.display = isPlanet ? 'inline-block' : 'none';
+            document.getElementById('presentation-btn').style.display = 'inline-block';
+        }
+
+        function closePanel() {
+            document.getElementById('info-panel').classList.remove('active');
+            stopPresentation();
+        }
+
+        function prevPlanet() {
+            stopPresentation();
+            const keys = Object.keys(planetData);
+            currentPlanetIndex = (currentPlanetIndex - 1 + keys.length) % keys.length;
+            showPlanetInfo(keys[currentPlanetIndex]);
+        }
+
+        function nextPlanet() {
+            stopPresentation();
+            const keys = Object.keys(planetData);
+            currentPlanetIndex = (currentPlanetIndex + 1) % keys.length;
+            showPlanetInfo(keys[currentPlanetIndex]);
+        }
+
+        function togglePresentation() {
+            if (isPresenting) {
+                stopPresentation();
+            } else {
+                startPresentation();
+            }
+        }
+
+        function startPresentation() {
+            document.getElementById('info-panel').classList.remove('active');
+            document.getElementById('presentation-panel').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+            presentationKeys = Object.keys(planetData);
+            presentationIndex = 0;
+            showPresentationSlide(presentationKeys[presentationIndex]);
+        }
+
+        function showPresentationSlide(planetKey) {
+            const planet = planetData[planetKey];
+            // Información adicional de ejemplo (puedes personalizarla por planeta si lo deseas)
+            let extraInfo = '';
+            if (planetKey === 'tierra') {
+                extraInfo = `
+                    <div class="planet-info" style="margin-bottom:20px;">
+                        <h3>Más datos</h3>
+                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                            <li><strong>Continentes:</strong> 7</li>
+                            <li><strong>Océanos:</strong> 5</li>
+                            <li><strong>Atmósfera:</strong> 78% Nitrógeno, 21% Oxígeno</li>
+                            <li><strong>Población:</strong> ~8 mil millones</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (planetKey === 'jupiter') {
+                extraInfo = `
+                    <div class="planet-info" style="margin-bottom:20px;">
+                        <h3>Más datos</h3>
+                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                            <li><strong>Gran Mancha Roja:</strong> Tormenta gigante de más de 300 años</li>
+                            <li><strong>Composición:</strong> Hidrógeno y Helio</li>
+                            <li><strong>Campo magnético:</strong> El más fuerte del sistema solar</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (planetKey === 'saturno') {
+                extraInfo = `
+                    <div class="planet-info" style="margin-bottom:20px;">
+                        <h3>Más datos</h3>
+                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                            <li><strong>Anillos:</strong> Principalmente hielo de agua</li>
+                            <li><strong>Luna más grande:</strong> Titán</li>
+                            <li><strong>Vientos:</strong> Hasta 1,800 km/h</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (planetKey === 'marte') {
+                extraInfo = `
+                    <div class="planet-info" style="margin-bottom:20px;">
+                        <h3>Más datos</h3>
+                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                            <li><strong>Monte Olimpo:</strong> Volcán más grande del sistema solar</li>
+                            <li><strong>Atmósfera:</strong> 95% CO₂</li>
+                            <li><strong>Exploración:</strong> Varios rovers activos</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (planetKey === 'venus') {
+                extraInfo = `
+                    <div class="planet-info" style="margin-bottom:20px;">
+                        <h3>Más datos</h3>
+                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                            <li><strong>Presión atmosférica:</strong> 92 veces la de la Tierra</li>
+                            <li><strong>Atmósfera:</strong> 96% CO₂</li>
+                            <li><strong>Superficie:</strong> Llena de volcanes y llanuras</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (planetKey === 'mercurio') {
+                extraInfo = `
+                    <div class="planet-info" style="margin-bottom:20px;">
+                        <h3>Más datos</h3>
+                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                            <li><strong>Campo magnético:</strong> Débil pero presente</li>
+                            <li><strong>Superficie:</strong> Llena de cráteres</li>
+                            <li><strong>Atmósfera:</strong> Muy tenue (exosfera)</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (planetKey === 'urano') {
+                extraInfo = `
+                    <div class="planet-info" style="margin-bottom:20px;">
+                        <h3>Más datos</h3>
+                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                            <li><strong>Inclinación axial:</strong> 98° (rota "acostado")</li>
+                            <li><strong>Anillos:</strong> 13 conocidos</li>
+                            <li><strong>Color:</strong> Azul verdoso por el metano</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (planetKey === 'neptuno') {
+                extraInfo = `
+                    <div class="planet-info" style="margin-bottom:20px;">
+                        <h3>Más datos</h3>
+                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                            <li><strong>Vientos:</strong> Más rápidos del sistema solar</li>
+                            <li><strong>Luna más grande:</strong> Tritón</li>
+                            <li><strong>Color:</strong> Azul intenso por el metano</li>
+                        </ul>
+                    </div>
+                `;
+            } else if (planetKey === 'sol') {
+                extraInfo = `
+                    <div class="planet-info" style="margin-bottom:20px;">
+                        <h3>Más datos</h3>
+                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                            <li><strong>Composición:</strong> 74% Hidrógeno, 24% Helio</li>
+                            <li><strong>Edad estimada:</strong> 4,600 millones de años</li>
+                            <li><strong>Fusión nuclear:</strong> 600 millones de toneladas de hidrógeno por segundo</li>
+                        </ul>
+                    </div>
+                `;
+            }
+
+            const content = `
+                <h1 class="planet-title" style="font-size:3em;">${planet.name}</h1>
+                <img src="${planet.image}" alt="${planet.name}" style="max-width: 350px; width: 80%; height: auto; margin: 30px auto 20px auto; display:block;">
+                <div class="planet-info" style="margin-bottom:20px;">
+                    <h3>Descripción</h3>
+                    <p>${planet.description}</p>
+                </div>
+                <div class="planet-info" style="margin-bottom:20px;">
+                    <h3>Datos Principales</h3>
+                    <div class="data-grid" style="max-width:400px;margin:0 auto;">
+                        ${Object.entries(planet.data).map(([key, value]) => `
+                            <div class="data-item">
+                                <div class="data-label">${key}</div>
+                                <div class="data-value">${value}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="planet-info" style="margin-bottom:20px;">
+                    <h3>Órbita y Rotación</h3>
+                    <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <li><strong>Distancia al Sol:</strong> ${planet.data["Distancia del Sol"] || planet.data["Distancia a la Tierra"] || "N/A"}</li>
+                        <li><strong>Duración del día:</strong> ${planet.data["Día"] || "N/A"}</li>
+                        <li><strong>Duración del año:</strong> ${planet.data["Año"] || "N/A"}</li>
+                    </ul>
+                </div>
+                ${extraInfo}
+                <div class="planet-info">
+                    <h3>Curiosidades</h3>
+                    <p>${planet.curiosities}</p>
+                </div>
+            `;
+            document.getElementById('presentation-content').innerHTML = content;
+        }
+
+        function stopPresentation() {
+            document.getElementById('presentation-panel').classList.remove('active');
+            document.body.style.overflow = '';
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+        }
+
+        function prevPresentationSlide() {
+            presentationIndex = (presentationIndex - 1 + presentationKeys.length) % presentationKeys.length;
+            showPresentationSlide(presentationKeys[presentationIndex]);
+        }
+
+        function nextPresentationSlide() {
+            presentationIndex = (presentationIndex + 1) % presentationKeys.length;
+            showPresentationSlide(presentationKeys[presentationIndex]);
+        }
+        // Inicializar cuando cargue la página
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
