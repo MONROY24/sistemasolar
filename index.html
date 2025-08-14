@@ -15,21 +15,24 @@
             font-family: 'Arial', sans-serif;
             background: #000;
             color: white;
-            overflow: hidden;
+            /* Espacio para el header fijo */
         }
 
         #canvas-container {
             width: 100vw;
             height: 100vh;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
         }
 
         #info-panel {
-            position: absolute;
+            position: fixed;
             right: -400px;
-            top: 0;
+            top: 110px;
             width: 400px;
-            height: 100vh;
+            height: calc(100vh - 110px);
             background: linear-gradient(135deg, rgba(15, 15, 35, 0.95), rgba(25, 25, 55, 0.95));
             backdrop-filter: blur(10px);
             border-left: 2px solid rgba(100, 150, 255, 0.3);
@@ -37,6 +40,7 @@
             transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             overflow-y: auto;
             box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
         }
 
         #info-panel.active {
@@ -44,9 +48,10 @@
         }
 
         .close-btn {
-            position: absolute;
+            position: sticky;
             top: 20px;
             right: 20px;
+            float: right;
             background: rgba(255, 100, 100, 0.8);
             border: none;
             color: white;
@@ -56,6 +61,7 @@
             cursor: pointer;
             font-size: 18px;
             transition: all 0.3s ease;
+            z-index: 1001;
         }
 
         .close-btn:hover {
@@ -132,6 +138,7 @@
             padding: 15px 20px;
             border-radius: 10px;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 2000;
         }
 
         #instructions p {
@@ -238,17 +245,165 @@
             justify-content: center;
             z-index: 10001;
         }
+
+        #cover-modal {
+            position: fixed;
+            z-index: 10000;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0a23 90%, #1a1a3b 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #cover-content {
+            background: rgba(30,40,70,0.97);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 0 40px #000a;
+            text-align: center;
+            color: #fff;
+            max-width: 90vw;
+        }
+
+        #cover-content h2 {
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            color: #ffd700;
+        }
+
+        #cover-content p {
+            font-size: 1.2em;
+            margin: 12px 0;
+        }
+
+        #cover-btn {
+            margin-top: 30px;
+            background: #64b5f6;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 40px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #cover-btn:hover {
+            background: #4286c7;
+        }
+
+        #school-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            background: linear-gradient(90deg, #0a0a23cc 80%, #1a1a3bcc 100%); /* semitransparente */
+            color: #fff;
+            z-index: 101;
+            box-shadow: 0 2px 16px #000a;
+            padding: 0;
+            pointer-events: none;
+        }
+
+        .header-content, .school-logo, .header-text, .school-info, .school-name {
+            pointer-events: auto;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 18px 32px 18px 24px;
+            pointer-events: auto;
+        }
+
+        .school-logo {
+            height: 70px;
+            width: 70px;
+            object-fit: contain;
+            border-radius: 12px;
+            background: #fff2;
+            border: 2px solid #ffd70044;
+            margin-right: 18px;
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .school-name {
+            font-size: 1.7em;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 2px;
+            letter-spacing: 1px;
+        }
+
+        .school-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px 32px;
+            font-size: 1.08em;
+        }
+
+        .school-info span {
+            margin-right: 10px;
+        }
+
+        /* Etiquetas flotantes para planetas */
+        .planet-label {
+            position: absolute;
+            color: #ffd700;
+            font-weight: bold;
+            text-shadow: 0 0 8px #000, 0 0 2px #fff;
+            pointer-events: none;
+            font-size: 1.1em;
+            z-index: 1000;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        /* Contenedor para etiquetas de planetas */
+        #labels-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
-    <div id="title">Sistema Solar</div>
+    <header id="school-header">
+        <div class="header-content">
+            <img src="img/logo.png" alt="" class="school-logo">
+            <div class="header-text">
+                <div class="school-name">Centro Escolar Cantón Los Magueyes</div>
+                <div class="school-info">
+                    <span><strong>Alumno:</strong> Angel Xavier Pérez Orellana</span>
+                    <span><strong>Materia:</strong> Ciencia y Tecnología</span>
+                    <span><strong>Docente:</strong> Licda. Berta Patricia Callejas</span>
+                    <span><strong>Tema:</strong> El Sistema Solar</span>
+                </div>
+            </div>
+        </div>
+    </header>
     
     <div id="canvas-container">
         <div class="loading" id="loading">Cargando el sistema solar...</div>
     </div>
 
     <div id="info-panel">
-        <button class="close-btn" onclick="closePanel()">×</button>
+        <div style="position:sticky;top:0;z-index:10;background:inherit;">
+            <h1 id="planet-title" class="planet-title"></h1>
+            <button class="close-btn" onclick="closePanel()">×</button>
+        </div>
         <div id="planet-content"></div>
         <div class="nav-buttons" id="nav-buttons" style="position:static; justify-content:center; margin-top:20px;">
             <button class="nav-button" id="prev-btn" onclick="prevPlanet()">Anterior</button>
@@ -260,7 +415,7 @@
         <p><strong>🖱️ Click:</strong> Seleccionar planeta</p>
         <p><strong>🖱️ Arrastrar:</strong> Rotar cámara</p>
         <p><strong>🖱️ Desplazamiento:</strong> Zoom</p>
-        <button class="nav-button" id="presentation-btn" onclick="startPresentation()" style="margin-top:10px; width:100%;">Iniciar Presentación</button>
+        <button class="nav-button" id="presentation-btn" onclick="window.startPresentation()" style="margin-top:10px; width:100%;">Iniciar Presentación</button>
     </div>
 
     <div id="presentation-panel">
@@ -271,6 +426,9 @@
             <button class="nav-button" onclick="nextPresentationSlide()">Siguiente</button>
         </div>
     </div>
+
+    <!-- Contenedor para etiquetas de planetas -->
+    <div id="labels-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
@@ -546,8 +704,9 @@
         }
 
         function createPlanets() {
+            const labelsContainer = document.getElementById('labels-container');
             Object.keys(planetData).forEach(key => {
-                if (key === "sol") return; // El sol ya fue creado
+                if (key === "sol") return;
                 const planet = planetData[key];
                 const geometry = new THREE.SphereGeometry(planet.radius, 64, 64);
                 const material = new THREE.MeshLambertMaterial({ color: planet.color });
@@ -570,6 +729,13 @@
                 mesh.userData = { type: 'planet', key: key };
                 scene.add(mesh);
                 planetMeshes.push({ mesh, ...planet });
+
+                // Crear etiqueta HTML
+                const label = document.createElement('div');
+                label.className = 'planet-label';
+                label.id = `label-${key}`;
+                label.innerText = planet.name;
+                labelsContainer.appendChild(label);
             });
             // Agregar el Sol al inicio de la lista para la presentación
             planetMeshes.unshift({ mesh: scene.children.find(obj => obj.userData && obj.userData.key === 'sol'), ...planetData['sol'] });
@@ -594,6 +760,25 @@
             });
 
             renderer.render(scene, camera);
+
+            updatePlanetLabels();
+        }
+
+        function updatePlanetLabels() {
+            const labelsContainer = document.getElementById('labels-container');
+            planetMeshes.forEach(planet => {
+                if (!planet.mesh) return;
+                const label = document.getElementById(`label-${planet.mesh.userData.key}`);
+                if (!label) return;
+                // Proyectar posición 3D a 2D
+                const vector = planet.mesh.position.clone();
+                vector.project(camera);
+                const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+                const y = (-(vector.y * 0.5) + 0.5) * window.innerHeight;
+                label.style.left = `${x - label.offsetWidth / 2}px`;
+                label.style.top = `${y - 40}px`; // 40px arriba del planeta
+                label.style.display = (vector.z < 1) ? 'block' : 'none'; // Oculta si está detrás de la cámara
+            });
         }
 
         function onMouseClick(event) {
@@ -663,8 +848,11 @@
             const planet = planetData[planetKey];
             currentPlanetIndex = Object.keys(planetData).indexOf(planetKey);
 
+            document.getElementById('planet-title').textContent = planet.name;
+            document.getElementById('info-panel').classList.add('active');
+            document.body.style.overflow = 'auto';  // Permite scroll
+
             const content = `
-                <h1 class="planet-title">${planet.name}</h1>
                 <img src="${planet.image}" alt="${planet.name}" style="width: 100%; height: auto;">
                 <div class="planet-info">
                     <h3>Descripción</h3>
@@ -686,10 +874,9 @@
                     <p>${planet.curiosities}</p>
                 </div>
             `;
+            
             document.getElementById('planet-content').innerHTML = content;
-            document.getElementById('info-panel').classList.add('active');
             updateNavButtons(true);
-            document.getElementById('presentation-btn').style.display = 'inline-block';
         }
 
         function showGeneralInfo() {
@@ -713,6 +900,7 @@
 
         function closePanel() {
             document.getElementById('info-panel').classList.remove('active');
+            document.body.style.overflow = ''; // Permite scroll nuevamente
             stopPresentation();
         }
 
@@ -730,23 +918,46 @@
             showPlanetInfo(keys[currentPlanetIndex]);
         }
 
-        function togglePresentation() {
-            if (isPresenting) {
-                stopPresentation();
-            } else {
-                startPresentation();
+        // Funciones de presentación
+        function startPresentation() {
+            console.log('Iniciando presentación...'); // Para debugging
+            document.getElementById('info-panel').classList.remove('active');
+            document.getElementById('presentation-panel').classList.add('active');
+            document.getElementById('school-header').style.display = 'none';
+            document.body.style.overflow = 'hidden';
+            
+            // Iniciar presentación
+            presentationKeys = Object.keys(planetData);
+            presentationIndex = 0;
+            showPresentationSlide(presentationKeys[presentationIndex]);
+            
+            // Pantalla completa
+            try {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                }
+            } catch (error) {
+                console.error('Error al intentar pantalla completa:', error);
             }
         }
 
-        function startPresentation() {
-            document.getElementById('info-panel').classList.remove('active');
-            document.getElementById('presentation-panel').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
+        function stopPresentation() {
+            document.getElementById('presentation-panel').classList.remove('active');
+            document.getElementById('school-header').style.display = '';
+            document.body.style.overflow = '';
+            
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
             }
-            presentationKeys = Object.keys(planetData);
-            presentationIndex = 0;
+        }
+
+        function prevPresentationSlide() {
+            presentationIndex = (presentationIndex - 1 + presentationKeys.length) % presentationKeys.length;
+            showPresentationSlide(presentationKeys[presentationIndex]);
+        }
+
+        function nextPresentationSlide() {
+            presentationIndex = (presentationIndex + 1) % presentationKeys.length;
             showPresentationSlide(presentationKeys[presentationIndex]);
         }
 
@@ -891,25 +1102,17 @@
             document.getElementById('presentation-content').innerHTML = content;
         }
 
-        function stopPresentation() {
-            document.getElementById('presentation-panel').classList.remove('active');
-            document.body.style.overflow = '';
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            }
-        }
-
-        function prevPresentationSlide() {
-            presentationIndex = (presentationIndex - 1 + presentationKeys.length) % presentationKeys.length;
-            showPresentationSlide(presentationKeys[presentationIndex]);
-        }
-
-        function nextPresentationSlide() {
-            presentationIndex = (presentationIndex + 1) % presentationKeys.length;
-            showPresentationSlide(presentationKeys[presentationIndex]);
-        }
         // Inicializar cuando cargue la página
         window.addEventListener('load', init);
+
+        // Hacer funciones globales
+        window.startPresentation = startPresentation;
+        window.stopPresentation = stopPresentation;
+        window.closePanel = closePanel;
+        window.prevPlanet = prevPlanet;
+        window.nextPlanet = nextPlanet;
+        window.prevPresentationSlide = prevPresentationSlide;
+        window.nextPresentationSlide = nextPresentationSlide;
     </script>
 </body>
 </html>
