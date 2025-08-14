@@ -21,18 +21,7 @@
         #canvas-container {
             width: 100vw;
             height: 100vh;
-            min-height: 100vh;
-            min-width: 100vw;
             position: relative;
-            overflow: hidden;
-        }
-        @media (max-width: 600px) {
-            #canvas-container {
-                min-width: 100vw;
-                min-height: 100vh;
-                width: 100vw;
-                height: 100vh;
-            }
         }
 
         #info-panel {
@@ -48,206 +37,10 @@
             transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
             overflow-y: auto;
             box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
-            width: 400px;
-            min-width: 280px;
-            max-width: 100vw;
-        }
-        @media (max-width: 900px) {
-            #info-panel {
-                width: 90vw;
-                padding: 18px 8px 18px 8px;
-            }
-        }
-        @media (max-width: 600px) {
-            #info-panel {
-                width: 100vw;
-                right: -100vw;
-                padding: 12px 4px 12px 4px;
-                font-size: 0.98em;
-                border-left: none;
-                border-radius: 0;
-            }
-            #info-panel.active {
-                right: 0;
-            }
-            .planet-title {
-                font-size: 1.5em !important;
-            }
-            .data-grid {
-                grid-template-columns: 1fr !important;
-            }
-            .close-btn {
-                top: 8px;
-                right: 8px;
-                width: 32px;
-                height: 32px;
-                font-size: 1em;
-            }
         }
 
-        #title {
-            position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2.5em;
-            background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-            z-index: 100;
-        }
-        @media (max-width: 600px) {
-            #title {
-                font-size: 1.3em;
-                top: 10px;
-            }
-        }
-
-        #instructions {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 15px 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            font-size: 1em;
-            padding: 10px 8px;
-            left: 0;
+        #info-panel.active {
             right: 0;
-            width: auto;
-            max-width: 98vw;
-        }
-        @media (max-width: 600px) {
-            #instructions {
-                font-size: 0.95em;
-                padding: 8px 4px;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                width: 100vw;
-                border-radius: 0;
-            }
-        }
-
-        .loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.5em;
-            color: #64b5f6;
-        }
-        @media (max-width: 600px) {
-            .loading {
-                font-size: 1em;
-            }
-        }
-
-        .orbit {
-            position: absolute;
-            border: 1px dashed rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-        }
-
-        .nav-buttons {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .nav-button {
-            background: rgba(100, 150, 255, 0.8);
-            border: none;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-            font-size: 1em;
-            padding: 10px 18px;
-        }
-        @media (max-width: 600px) {
-            .nav-button {
-                font-size: 0.95em;
-                padding: 8px 10px;
-            }
-        }
-
-        #presentation-panel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(135deg, #0a0a23 90%, #1a1a3b 100%);
-            color: white;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            z-index: 9999;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        #presentation-panel.active {
-            display: flex;
-        }
-
-        #presentation-content {
-            max-width: 1100px;
-            width: 98vw;
-            margin: 80px auto 20px auto;
-            background: rgba(30,40,70,0.95);
-            border-radius: 20px;
-            padding: 40px 40px 40px 40px;
-            box-shadow: 0 0 40px #000a;
-            text-align: center;
-            overflow-y: auto;
-            max-height: 82vh;
-        }
-        @media (max-width: 900px) {
-            #presentation-content {
-                max-width: 98vw;
-                padding: 20px 6vw 20px 6vw;
-                font-size: 1em;
-            }
-        }
-        @media (max-width: 600px) {
-            #presentation-content {
-                max-width: 100vw;
-                width: 100vw;
-                margin: 60px 0 10px 0;
-                padding: 12px 2vw 12px 2vw;
-                border-radius: 0;
-                font-size: 0.98em;
-            }
-            #presentation-panel {
-                padding: 0;
-            }
-            #exit-presentation {
-                top: 10px;
-                right: 10px;
-                padding: 8px 16px;
-                font-size: 1em;
-            }
-            #presentation-nav {
-                bottom: 10px;
-                gap: 10px;
-            }
-            .planet-title {
-                font-size: 1.2em !important;
-            }
-            .data-grid {
-                grid-template-columns: 1fr !important;
-            }
-            img[alt] {
-                max-width: 90vw !important;
-            }
         }
 
         .close-btn {
@@ -286,11 +79,6 @@
             border-bottom: 2px solid rgba(100, 181, 246, 0.3);
             padding-bottom: 5px;
         }
-        @media (max-width: 600px) {
-            .planet-info h3 {
-                font-size: 1em;
-            }
-        }
 
         .planet-info p {
             line-height: 1.6;
@@ -303,11 +91,6 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin: 20px 0;
-        }
-        @media (max-width: 600px) {
-            .data-grid {
-                grid-template-columns: 1fr !important;
-            }
         }
 
         .data-item {
@@ -328,22 +111,55 @@
             font-size: 1.1em;
         }
 
-        #exit-presentation {
+        #title {
             position: absolute;
             top: 30px;
-            right: 40px;
-            background: #ff4d4d;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 28px;
-            font-size: 1.2em;
-            cursor: pointer;
-            z-index: 10001;
-            transition: background 0.3s;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            z-index: 100;
         }
-        #exit-presentation:hover {
-            background: #ff2222;
+
+        #instructions {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        #instructions p {
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            color: #64b5f6;
+        }
+
+        .orbit {
+            position: absolute;
+            border: 1px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+        }
+
+        .nav-buttons {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 10px;
         }
 
         .nav-button {
@@ -354,190 +170,73 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
-            font-size: 1em;
-            padding: 10px 18px;
-        }
-        @media (max-width: 600px) {
-            .nav-button {
-                font-size: 0.95em;
-                padding: 8px 10px;
-            }
         }
 
-        /* Responsive para todo el sistema solar */
-
-        /* Panel lateral responsive */
-        #info-panel {
-            width: 400px;
-            min-width: 280px;
-            max-width: 100vw;
-        }
-        @media (max-width: 900px) {
-            #info-panel {
-                width: 90vw;
-                padding: 18px 8px 18px 8px;
-            }
-        }
-        @media (max-width: 600px) {
-            #info-panel {
-                width: 100vw;
-                right: -100vw;
-                padding: 12px 4px 12px 4px;
-                font-size: 0.98em;
-                border-left: none;
-                border-radius: 0;
-            }
-            #info-panel.active {
-                right: 0;
-            }
-            .planet-title {
-                font-size: 1.5em !important;
-            }
-            .data-grid {
-                grid-template-columns: 1fr !important;
-            }
-            .close-btn {
-                top: 8px;
-                right: 8px;
-                width: 32px;
-                height: 32px;
-                font-size: 1em;
-            }
+        .nav-button:hover {
+            background: rgba(100, 150, 255, 1);
         }
 
-        /* Presentación responsive */
+        #presentation-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #0a0a23 90%, #1a1a3b 100%);
+            color: white;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 40px 20px 20px 20px;
+            box-sizing: border-box;
+        }
+
+        #presentation-panel.active {
+            display: flex;
+        }
+
         #presentation-content {
-            max-width: 1100px;
+            max-width: 1200px;
             width: 98vw;
-            margin: 80px auto 20px auto;
-            background: rgba(30,40,70,0.95);
+            margin: 40px auto 0 auto;
+            background: rgba(30,40,70,0.97);
             border-radius: 20px;
-            padding: 40px 40px 40px 40px;
+            padding: 50px 60px 50px 60px;
             box-shadow: 0 0 40px #000a;
             text-align: center;
             overflow-y: auto;
-            max-height: 82vh;
-        }
-        @media (max-width: 900px) {
-            #presentation-content {
-                max-width: 98vw;
-                padding: 20px 6vw 20px 6vw;
-                font-size: 1em;
-            }
-        }
-        @media (max-width: 600px) {
-            #presentation-content {
-                max-width: 100vw;
-                width: 100vw;
-                margin: 60px 0 10px 0;
-                padding: 12px 2vw 12px 2vw;
-                border-radius: 0;
-                font-size: 0.98em;
-            }
-            #presentation-panel {
-                padding: 0;
-            }
-            #exit-presentation {
-                top: 10px;
-                right: 10px;
-                padding: 8px 16px;
-                font-size: 1em;
-            }
-            #presentation-nav {
-                bottom: 10px;
-                gap: 10px;
-            }
-            .planet-title {
-                font-size: 1.2em !important;
-            }
-            .data-grid {
-                grid-template-columns: 1fr !important;
-            }
-            img[alt] {
-                max-width: 90vw !important;
-            }
+            max-height: 78vh;
         }
 
-        /* Botones y textos adaptativos */
-        .nav-button {
-            font-size: 1em;
-            padding: 10px 18px;
-        }
-        @media (max-width: 600px) {
-            .nav-button {
-                font-size: 0.95em;
-                padding: 8px 10px;
-            }
-        }
-
-        /* Títulos y textos */
-        .planet-info h3 {
-            font-size: 1.1em;
-        }
-        @media (max-width: 600px) {
-            .planet-info h3 {
-                font-size: 1em;
-            }
+        #exit-presentation {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 100, 100, 0.8);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
         }
 
-        /* Ajuste para el título principal */
-        #title {
-            font-size: 2.5em;
-        }
-        @media (max-width: 600px) {
-            #title {
-                font-size: 1.3em;
-                top: 10px;
-            }
+        #exit-presentation:hover {
+            background: rgba(255, 100, 100, 1);
         }
 
-        /* Instrucciones adaptativas */
-        #instructions {
-            font-size: 1em;
-            padding: 10px 8px;
+        #presentation-nav {
+            position: absolute;
             left: 0;
             right: 0;
-            width: auto;
-            max-width: 98vw;
-        }
-        @media (max-width: 600px) {
-            #instructions {
-                font-size: 0.95em;
-                padding: 8px 4px;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                width: 100vw;
-                border-radius: 0;
-            }
-        }
-
-        /* Ajuste para el canvas */
-        #canvas-container {
-            width: 100vw;
-            height: 100vh;
-            min-height: 100vh;
-            min-width: 100vw;
-            position: relative;
-            overflow: hidden;
-        }
-        @media (max-width: 600px) {
-            #canvas-container {
-                min-width: 100vw;
-                min-height: 100vh;
-                width: 100vw;
-                height: 100vh;
-            }
-        }
-
-        /* Ajuste para loading */
-        .loading {
-            font-size: 1.5em;
-        }
-        @media (max-width: 600px) {
-            .loading {
-                font-size: 1em;
-            }
+            bottom: 40px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            z-index: 10001;
         }
     </style>
 </head>
@@ -1053,13 +752,13 @@
 
         function showPresentationSlide(planetKey) {
             const planet = planetData[planetKey];
-            // Información adicional de ejemplo (puedes personalizarla por planeta si lo deseas)
+            // Información adicional personalizada
             let extraInfo = '';
             if (planetKey === 'tierra') {
                 extraInfo = `
                     <div class="planet-info" style="margin-bottom:20px;">
                         <h3>Más datos</h3>
-                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <ul style="text-align:left;max-width:600px;margin:0 auto;">
                             <li><strong>Continentes:</strong> 7</li>
                             <li><strong>Océanos:</strong> 5</li>
                             <li><strong>Atmósfera:</strong> 78% Nitrógeno, 21% Oxígeno</li>
@@ -1071,7 +770,7 @@
                 extraInfo = `
                     <div class="planet-info" style="margin-bottom:20px;">
                         <h3>Más datos</h3>
-                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <ul style="text-align:left;max-width:600px;margin:0 auto;">
                             <li><strong>Gran Mancha Roja:</strong> Tormenta gigante de más de 300 años</li>
                             <li><strong>Composición:</strong> Hidrógeno y Helio</li>
                             <li><strong>Campo magnético:</strong> El más fuerte del sistema solar</li>
@@ -1082,7 +781,7 @@
                 extraInfo = `
                     <div class="planet-info" style="margin-bottom:20px;">
                         <h3>Más datos</h3>
-                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <ul style="text-align:left;max-width:600px;margin:0 auto;">
                             <li><strong>Anillos:</strong> Principalmente hielo de agua</li>
                             <li><strong>Luna más grande:</strong> Titán</li>
                             <li><strong>Vientos:</strong> Hasta 1,800 km/h</li>
@@ -1093,7 +792,7 @@
                 extraInfo = `
                     <div class="planet-info" style="margin-bottom:20px;">
                         <h3>Más datos</h3>
-                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <ul style="text-align:left;max-width:600px;margin:0 auto;">
                             <li><strong>Monte Olimpo:</strong> Volcán más grande del sistema solar</li>
                             <li><strong>Atmósfera:</strong> 95% CO₂</li>
                             <li><strong>Exploración:</strong> Varios rovers activos</li>
@@ -1104,7 +803,7 @@
                 extraInfo = `
                     <div class="planet-info" style="margin-bottom:20px;">
                         <h3>Más datos</h3>
-                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <ul style="text-align:left;max-width:600px;margin:0 auto;">
                             <li><strong>Presión atmosférica:</strong> 92 veces la de la Tierra</li>
                             <li><strong>Atmósfera:</strong> 96% CO₂</li>
                             <li><strong>Superficie:</strong> Llena de volcanes y llanuras</li>
@@ -1115,7 +814,7 @@
                 extraInfo = `
                     <div class="planet-info" style="margin-bottom:20px;">
                         <h3>Más datos</h3>
-                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <ul style="text-align:left;max-width:600px;margin:0 auto;">
                             <li><strong>Campo magnético:</strong> Débil pero presente</li>
                             <li><strong>Superficie:</strong> Llena de cráteres</li>
                             <li><strong>Atmósfera:</strong> Muy tenue (exosfera)</li>
@@ -1126,7 +825,7 @@
                 extraInfo = `
                     <div class="planet-info" style="margin-bottom:20px;">
                         <h3>Más datos</h3>
-                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <ul style="text-align:left;max-width:600px;margin:0 auto;">
                             <li><strong>Inclinación axial:</strong> 98° (rota "acostado")</li>
                             <li><strong>Anillos:</strong> 13 conocidos</li>
                             <li><strong>Color:</strong> Azul verdoso por el metano</li>
@@ -1137,7 +836,7 @@
                 extraInfo = `
                     <div class="planet-info" style="margin-bottom:20px;">
                         <h3>Más datos</h3>
-                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <ul style="text-align:left;max-width:600px;margin:0 auto;">
                             <li><strong>Vientos:</strong> Más rápidos del sistema solar</li>
                             <li><strong>Luna más grande:</strong> Tritón</li>
                             <li><strong>Color:</strong> Azul intenso por el metano</li>
@@ -1148,7 +847,7 @@
                 extraInfo = `
                     <div class="planet-info" style="margin-bottom:20px;">
                         <h3>Más datos</h3>
-                        <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                        <ul style="text-align:left;max-width:600px;margin:0 auto;">
                             <li><strong>Composición:</strong> 74% Hidrógeno, 24% Helio</li>
                             <li><strong>Edad estimada:</strong> 4,600 millones de años</li>
                             <li><strong>Fusión nuclear:</strong> 600 millones de toneladas de hidrógeno por segundo</li>
@@ -1159,14 +858,14 @@
 
             const content = `
                 <h1 class="planet-title" style="font-size:3em;">${planet.name}</h1>
-                <img src="${planet.image}" alt="${planet.name}" style="max-width: 350px; width: 80%; height: auto; margin: 30px auto 20px auto; display:block;">
+                <img src="${planet.image}" alt="${planet.name}" style="max-width: 400px; width: 80%; height: auto; margin: 30px auto 20px auto; display:block;">
                 <div class="planet-info" style="margin-bottom:20px;">
                     <h3>Descripción</h3>
                     <p>${planet.description}</p>
                 </div>
                 <div class="planet-info" style="margin-bottom:20px;">
                     <h3>Datos Principales</h3>
-                    <div class="data-grid" style="max-width:400px;margin:0 auto;">
+                    <div class="data-grid" style="max-width:600px;margin:0 auto;">
                         ${Object.entries(planet.data).map(([key, value]) => `
                             <div class="data-item">
                                 <div class="data-label">${key}</div>
@@ -1177,7 +876,7 @@
                 </div>
                 <div class="planet-info" style="margin-bottom:20px;">
                     <h3>Órbita y Rotación</h3>
-                    <ul style="text-align:left;max-width:500px;margin:0 auto;">
+                    <ul style="text-align:left;max-width:600px;margin:0 auto;">
                         <li><strong>Distancia al Sol:</strong> ${planet.data["Distancia del Sol"] || planet.data["Distancia a la Tierra"] || "N/A"}</li>
                         <li><strong>Duración del día:</strong> ${planet.data["Día"] || "N/A"}</li>
                         <li><strong>Duración del año:</strong> ${planet.data["Año"] || "N/A"}</li>
